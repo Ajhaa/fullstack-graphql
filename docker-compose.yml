@@ -1,0 +1,31 @@
+version: "3.7"
+
+services:
+  frontend:
+    build: ./library-frontend
+    environment: 
+      GQL_URL: "http://localhost:4000/graphql"
+    ports: 
+      - "3000:3000"
+    volumes: 
+      - ./library-frontend/src:/app/src
+  
+  backend:
+    build: ./backend
+    environment: 
+      MONGO_URL: "mongodb://docker:secret@mongodb:27017/admin?retryWrites=true"
+    ports:
+      - "4000:4000"
+    volumes: 
+      - ./backend/src:/app/src
+  
+  ## not secure, developement use only
+  mongodb:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: docker
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    volumes:
+      - ./mongodata:/data/db
+
+
