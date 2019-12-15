@@ -14,7 +14,7 @@ const SET_BIRTHYEAR = gql`
 const SetBirthyear = ({ authors }) => {
   const [author, setAuthor] = useState(authors[0] | "");
   const [year, setYear] = useState("");
-  const [setBirthyear, { data }] = useMutation(SET_BIRTHYEAR);
+  const [setBirthyear] = useMutation(SET_BIRTHYEAR);
 
   const submit = e => {
     e.preventDefault();
