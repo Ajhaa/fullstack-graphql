@@ -29,9 +29,11 @@ const App = () => {
   const submitLogin = async e => {
     e.preventDefault();
     const res = await login({ variables: { username, password } });
+    
     if (!res) {
       return;
     }
+
     setToken(res.data.login.value);
     localStorage.setItem('library-user-token', res.data.login.value);
     setUsername('');

@@ -1,18 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { useLazyQuery } from '@apollo/react-hooks';
+import { useLazyQuery, useSubscription } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
+
+const BOOK_DETAILS = gql`
+fragment BookDetails on Book {
+  title
+  published
+  genres
+  author {
+    name
+  }
+}
+`;
 
 const BOOKS = gql`
   query AllBooks($genre: String) {
     allBooks(genre: $genre) {
-      title
-      published
-      genres
-      author {
-        name
-      }
+      ...BookDetails
+    }
+
+  }
+  ${BOOK_DETAILS}
+`;
+
+const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
     }
   }
+  ${BOOK_DETAILS}
 `;
 
 const possibleGenres = (books) => {
@@ -27,6 +44,14 @@ const possibleGenres = (books) => {
 
 const Books = (props) => {
   const [getBooks, { loading, data, error }] = useLazyQuery(BOOKS, { fetchPolicy: 'cache-and-network' });
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log(subscriptionData);
+      window.alert(`Ǹew book: ${subscriptionData.data.bookAdded.title}`);
+    }
+  });
+
   const [genre, setGenre] = useState('');
   const [genres, setGenres] = useState(new Set());
 
