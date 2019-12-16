@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import SetBirthyear from './SetBirthyear';
@@ -14,18 +14,18 @@ const ALL_AUTHORS = gql`
 `;
 
 const Authors = ({ show }) => {
-  const {loading, error, data } = useQuery(ALL_AUTHORS, { pollInterval: 2000 })
+  const {loading, error, data } = useQuery(ALL_AUTHORS, { pollInterval: 2000 });
   
   if (!show) {
-    return null
+    return null;
   }
 
   if (loading) {
-    return <div>loading...</div>
+    return <div>loading...</div>;
   }
 
   if (error) {
-    return <div>error loading authors</div>
+    return <div>error loading authors</div>;
   }
 
   const authors = data.allAuthors;
@@ -56,7 +56,7 @@ const Authors = ({ show }) => {
       <h3>set birthyear</h3>
       <SetBirthyear authors={authors.map(a => a.name)} />
     </div>
-  )
-}
+  );
+};
 
-export default Authors
+export default Authors;

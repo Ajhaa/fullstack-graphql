@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useMutation } from "@apollo/react-hooks";
-import { gql } from "apollo-boost";
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
 
 const SET_BIRTHYEAR = gql`
   mutation EditAuthor($name: String!, $year: Int!) {
@@ -12,8 +12,8 @@ const SET_BIRTHYEAR = gql`
 `;
 
 const SetBirthyear = ({ authors }) => {
-  const [author, setAuthor] = useState(authors[0] | "");
-  const [year, setYear] = useState("");
+  const [author, setAuthor] = useState(authors[0] | '');
+  const [year, setYear] = useState('');
   const [setBirthyear] = useMutation(SET_BIRTHYEAR);
 
   const submit = e => {
