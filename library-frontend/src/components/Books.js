@@ -45,19 +45,25 @@ const possibleGenres = (books) => {
 const Books = (props) => {
   const [getBooks, { loading, data, error }] = useLazyQuery(BOOKS, { fetchPolicy: 'cache-and-network' });
 
-  useSubscription(BOOK_ADDED, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      console.log(subscriptionData);
-      window.alert(`Ǹew book: ${subscriptionData.data.bookAdded.title}`);
-    }
-  });
-
   const [genre, setGenre] = useState('');
   const [genres, setGenres] = useState(new Set());
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const book = subscriptionData.data.bookAdded.title;
+      window.alert(`Ǹew book: ${book}`);
+      getBooks({ variables: { genre }});
+    }
+  });
 
   useEffect(() => {
     getBooks({ variables: { genre }});
   }, [genre, getBooks]);
+
+  const handleFilter = (e) => {
+    setGenre(e.target.value);
+    setGenres(allGenres);
+  };
   
   if (!props.show) {
     return null;
@@ -73,11 +79,6 @@ const Books = (props) => {
 
   let books = data.allBooks;
   let allGenres = new Set([...possibleGenres(books), ...genres]);
-
-  const handleFilter = (e) => {
-    setGenre(e.target.value);
-    setGenres(allGenres);
-  };
 
   return (
     <div>

@@ -22,14 +22,14 @@ const App = () => {
 
   const [login, { error }] = useMutation(LOGIN, {
     onError: e => {
-      console.log(e);
+      console.error(e);
     }
   });
 
   const submitLogin = async e => {
     e.preventDefault();
     const res = await login({ variables: { username, password } });
-    
+
     if (!res) {
       return;
     }

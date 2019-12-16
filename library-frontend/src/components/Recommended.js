@@ -35,8 +35,6 @@ const Recommendations = ({ show }) => {
     return <div>not logged in</div>;
   }
 
-  console.log(data);
-
   const user = data.me;
   const books = data.allBooks.filter(b => b.genres.includes(user.favoriteGenre));
   
@@ -44,26 +42,26 @@ const Recommendations = ({ show }) => {
     <div>
       <h2>recommendations</h2>
       <div>books in your favourite genre <b>{user.favoriteGenre}</b></div>
-        <table>
-          <tbody>
-            <tr>
-              <th></th>
-              <th>
+      <table>
+        <tbody>
+          <tr>
+            <th></th>
+            <th>
               author
-              </th>
-              <th>
+            </th>
+            <th>
               published
-              </th>
+            </th>
+          </tr>
+          {books.map(a =>
+            <tr key={a.title}>
+              <td>{a.title}</td>
+              <td>{a.author.name}</td>
+              <td>{a.published}</td>
             </tr>
-            {books.map(a =>
-              <tr key={a.title}>
-                <td>{a.title}</td>
-                <td>{a.author.name}</td>
-                <td>{a.published}</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };
