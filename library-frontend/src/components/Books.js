@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/react-hooks';
+import React, { useState, useEffect } from 'react';
+import { useLazyQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
-const ALL_BOOKS = gql`
-{
-  allBooks {
-    title
-    published
-    genres
-    author {
-      name
+const BOOKS = gql`
+  query AllBooks($genre: String) {
+    allBooks(genre: $genre) {
+      title
+      published
+      genres
+      author {
+        name
+      }
     }
   }
-}
 `;
 
 const possibleGenres = (books) => {
@@ -22,12 +22,17 @@ const possibleGenres = (books) => {
     genres.add(...book.genres);
   }
 
-  return [...genres];
+  return genres;
 };
 
 const Books = (props) => {
-  const { loading, error, data } = useQuery(ALL_BOOKS, { pollInterval: 2000 });
+  const [getBooks, { loading, data, error }] = useLazyQuery(BOOKS);
   const [genre, setGenre] = useState('');
+  const [genres, setGenres] = useState(new Set());
+
+  useEffect(() => {
+    getBooks({ variables: { genre }});
+  }, [genre]);
   
   if (!props.show) {
     return null;
@@ -42,12 +47,13 @@ const Books = (props) => {
   }
 
   let books = data.allBooks;
-  let genres = possibleGenres(books);
-  console.log(genres);
+  let allGenres = new Set([...possibleGenres(books), ...genres]);
 
-  if (genre) {
-    books = books.filter(b => b.genres.includes(genre));
-  }
+  const handleFilter = (e) => {
+    setGenre(e.target.value);
+    setGenres(allGenres);
+  };
+
   return (
     <div>
       <h2>books</h2>
@@ -72,9 +78,9 @@ const Books = (props) => {
           )}
         </tbody>
       </table>
-      <select value={genre} onChange={(e) => setGenre(e.target.value)}>
+      <select value={genre} onChange={handleFilter}>
         <option value="">all genres</option>
-        {genres.map(g => <option key={g} value={g}>{g}</option>)}
+        {[...allGenres].sort().map(g => <option key={g} value={g}>{g}</option>)}
       </select>
     </div>
   );
