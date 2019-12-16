@@ -23,16 +23,11 @@ const Query = {
     return Book.find(filters).populate("author");
   },
   allAuthors: async () => {
-    const books = await Book.find({});
-    const authors = await Author.find({});
-    return authors.map(author => {
-      author.bookCount = 0;
-      books.forEach(b => {
-        if (b.author.equals(author._id)) {
-          author.bookCount++;
-        }
-      });
-      return author;
+    const authors = await Author.find({}).populate("books");
+    console.log(authors);
+    return authors.map(a => {
+      a.bookCount = a.books.length;
+      return a;
     });
   }
 };

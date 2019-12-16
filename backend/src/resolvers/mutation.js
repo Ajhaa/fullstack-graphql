@@ -30,8 +30,11 @@ const Mutation = {
     }
 
     const book = new Book({ ...args, author, id: uuid() });
+    author.books.push(book.id); 
+    console.log(author);
     try {
       await book.save();
+      await author.save();
     } catch (error) {
       throw new UserInputError(error.message, {
         invalidArgs: args
