@@ -1,10 +1,15 @@
 const Mutation = require("./mutation");
 const Query = require("./query");
-//const Subscription = require("./subscription");
+const pubsub = require("./pubsub");
 
 const resolvers = {
   Query,
-  Mutation
+  Mutation,
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED']),
+    }
+  }
 };
 
 module.exports = resolvers;

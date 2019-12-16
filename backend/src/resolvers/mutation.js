@@ -5,6 +5,7 @@ const Author = require("../schema/author");
 const Book = require("../schema/book");
 const User = require("../schema/user");
 
+const pubsub = require("./pubsub");
 const PASSWORD = "salakala";
 const JWT_SECRET = "verysecret";
 
@@ -30,12 +31,15 @@ const Mutation = {
 
     const book = new Book({ ...args, author, id: uuid() });
     try {
-      return book.save();
+      await book.save();
     } catch (error) {
       throw new UserInputError(error.message, {
         invalidArgs: args
       });
     }
+
+    pubsub.publish('BOOK_ADDED', { bookAdded: book });
+    return book;
   },
   editAuthor: (_, { name, setBornTo }, { currentUser }) => {
     if (!currentUser) {
