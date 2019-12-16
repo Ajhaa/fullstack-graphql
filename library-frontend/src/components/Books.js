@@ -26,19 +26,19 @@ const possibleGenres = (books) => {
 };
 
 const Books = (props) => {
-  const [getBooks, { loading, data, error }] = useLazyQuery(BOOKS);
+  const [getBooks, { loading, data, error }] = useLazyQuery(BOOKS, { fetchPolicy: 'cache-and-network' });
   const [genre, setGenre] = useState('');
   const [genres, setGenres] = useState(new Set());
 
   useEffect(() => {
     getBooks({ variables: { genre }});
-  }, [genre]);
+  }, [genre, getBooks]);
   
   if (!props.show) {
     return null;
   }
 
-  if (loading) {
+  if (loading && !data) {
     return <div>loading...</div>;
   }
 
