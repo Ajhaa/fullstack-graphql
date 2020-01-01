@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
-
 const ADD_BOOK = gql`
   mutation AddBook(
     $title: String!
@@ -26,20 +25,26 @@ const ADD_BOOK = gql`
   }
 `;
 
-const NewBook = (props) => {
+const NewBook = props => {
   const [title, setTitle] = useState('');
   const [author, setAuhtor] = useState('');
   const [published, setPublished] = useState('');
   const [genre, setGenre] = useState('');
   const [genres, setGenres] = useState([]);
+  const [loginError, setLoginError] = useState(false);
 
-  const [ addBook ] = useMutation(ADD_BOOK);
+  const [addBook] = useMutation(ADD_BOOK, {
+    onError: _ => {
+      setLoginError(true);
+      setTimeout(() => setLoginError(false), 3000);
+    }
+  });
 
   if (!props.show) {
     return null;
   }
 
-  const submit = async (e) => {
+  const submit = async e => {
     e.preventDefault();
     const year = Number(published);
     addBook({ variables: { title, author, published: year, genres } });
@@ -76,7 +81,7 @@ const NewBook = (props) => {
         <div>
           published
           <input
-            type='number'
+            type="number"
             value={published}
             onChange={({ target }) => setPublished(target.value)}
           />
@@ -86,12 +91,13 @@ const NewBook = (props) => {
             value={genre}
             onChange={({ target }) => setGenre(target.value)}
           />
-          <button onClick={addGenre} type="button">add genre</button>
+          <button onClick={addGenre} type="button">
+            add genre
+          </button>
         </div>
-        <div>
-          genres: {genres.join(' ')}
-        </div>
-        <button type='submit'>create book</button>
+        <div>genres: {genres.join(' ')}</div>
+        {loginError ? <div style={{ color: 'red' }}>log in first</div> : null}
+        <button type="submit">create book</button>
       </form>
     </div>
   );
