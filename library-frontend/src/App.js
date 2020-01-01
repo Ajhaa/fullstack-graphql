@@ -1,44 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { gql } from 'apollo-boost';
-import { useMutation } from '@apollo/react-hooks';
 import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
 import Recommended from './components/Recommended';
-
-const LOGIN = gql`
-  mutation Login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
-      value
-    }
-  }
-`;
+import Login from './components/Login';
 
 const App = () => {
   const [page, setPage] = useState('authors');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+
   const [token, setToken] = useState(null);
-
-  const [login, { error }] = useMutation(LOGIN, {
-    onError: e => {
-      console.error(e);
-    }
-  });
-
-  const submitLogin = async e => {
-    e.preventDefault();
-    const res = await login({ variables: { username, password } });
-
-    if (!res) {
-      return;
-    }
-
-    setToken(res.data.login.value);
-    localStorage.setItem('library-user-token', res.data.login.value);
-    setUsername('');
-    setPassword('');
-  };
 
   const logout = e => {
     e.preventDefault();
@@ -48,7 +18,7 @@ const App = () => {
 
   useEffect(() => {
     setToken(localStorage.getItem('library-user-token'));
-  }, []);
+  }, [page]);
 
   return (
     <div>
@@ -56,36 +26,24 @@ const App = () => {
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')}>add book</button>
-        {token ? 
+        {token ? (
           <>
             <button onClick={() => setPage('recommended')}>recommended</button>
             <button onClick={logout}>logout</button>
-          </> : null}
+          </>
+        ) : (
+          <button onClick={() => setPage('login')}>login</button>
+        )}
       </div>
-      {token ? null : (
-        <form onSubmit={submitLogin}>
-          <input
-            type="text"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
-          <input type="submit" value="login" />
-        </form>
-      )}
-      {error ? <div>error logging in</div> : null}
-
       <Authors show={page === 'authors'} />
 
       <Books show={page === 'books'} />
 
       <NewBook show={page === 'add'} />
-      
+
       <Recommended show={page === 'recommended'} />
+
+      <Login show={page === 'login'} setPage={setPage} />
     </div>
   );
 };
