@@ -1,9 +1,9 @@
-const Author = require("../schema/author");
-const Book = require("../schema/book");
+const Author = require('../schema/author');
+const Book = require('../schema/book');
 
 const Query = {
   hello: () => {
-    return "world";
+    return 'world';
   },
   me: (_, __, context) => context.currentUser,
   bookCount: () => {
@@ -20,11 +20,10 @@ const Query = {
     }
     if (args.genre) filters.genres = args.genre;
 
-    return Book.find(filters).populate("author");
+    return Book.find(filters).populate('author');
   },
   allAuthors: async () => {
-    const authors = await Author.find({}).populate("books");
-    console.log(authors);
+    const authors = await Author.find({}).populate('books');
     return authors.map(a => {
       a.bookCount = a.books.length;
       return a;

@@ -1,20 +1,20 @@
-const { UserInputError, AuthenticationError } = require("apollo-server");
-const jwt = require("jsonwebtoken");
-const uuid = require("uuid/v1");
-const Author = require("../schema/author");
-const Book = require("../schema/book");
-const User = require("../schema/user");
+const { UserInputError, AuthenticationError } = require('apollo-server');
+const jwt = require('jsonwebtoken');
+const uuid = require('uuid/v1');
+const Author = require('../schema/author');
+const Book = require('../schema/book');
+const User = require('../schema/user');
 
-const pubsub = require("./pubsub");
-const PASSWORD = "salakala";
-const JWT_SECRET = "verysecret";
+const pubsub = require('./pubsub');
+const PASSWORD = 'salakala';
+const JWT_SECRET = 'verysecret';
 
 const Mutation = {
   addBook: async (_, args, { currentUser }) => {
     if (!currentUser) {
-      throw new AuthenticationError("Need to authenticate");
+      throw new AuthenticationError('Need to authenticate');
     }
-    
+
     const authorName = args.author;
 
     let author = await Author.findOne({ name: authorName });
@@ -30,8 +30,8 @@ const Mutation = {
     }
 
     const book = new Book({ ...args, author, id: uuid() });
-    author.books.push(book.id); 
-    console.log(author);
+    author.books.push(book.id);
+
     try {
       await book.save();
       await author.save();
@@ -46,7 +46,7 @@ const Mutation = {
   },
   editAuthor: (_, { name, setBornTo }, { currentUser }) => {
     if (!currentUser) {
-      throw new AuthenticationError("Need to authenticate");
+      throw new AuthenticationError('Need to authenticate');
     }
 
     return Author.findOneAndUpdate({ name }, { born: setBornTo });
@@ -63,7 +63,7 @@ const Mutation = {
     if (!user) {
       throw new AuthenticationError('invalid login');
     }
-    
+
     const { _id, username } = user;
 
     if (_id && args.password === PASSWORD) {
@@ -72,6 +72,6 @@ const Mutation = {
       throw new AuthenticationError('invalid login');
     }
   }
-}
+};
 
 module.exports = Mutation;

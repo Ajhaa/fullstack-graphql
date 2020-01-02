@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   name: {
@@ -13,9 +13,9 @@ const schema = new mongoose.Schema({
   books: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Book"
+      ref: 'Book'
     }
   ]
 });
 
-module.exports = mongoose.model("Author", schema);
+module.exports = mongoose.model('Author', schema);
